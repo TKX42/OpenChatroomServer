@@ -12,19 +12,19 @@ public class MessageList {
     }
 
     public Message addMessage(Message message) {
-        if(messages.contains(message)) return null;
+        if (messages.contains(message)) return null;
         messages.add(message);
         return message;
     }
 
     private int chunkEnd(int index, int size) {
-        return size - index*CHUNK_SIZE;
+        return size - index * CHUNK_SIZE;
     }
 
     public List<Message> getChunk(int index) {
         int start = (index + 1) * CHUNK_SIZE;
 
-        if(start - 16 > messages.size()) return null;
+        if (start - 16 > messages.size()) return null;
 
         start = Math.max(messages.size() - start, 0);
 

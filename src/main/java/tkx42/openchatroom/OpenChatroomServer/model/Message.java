@@ -1,13 +1,13 @@
 package tkx42.openchatroom.OpenChatroomServer.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Message {
     private final String content;
-    private final LocalDate sent;
+    private final LocalDateTime sent;
     private final User user;
 
-    public Message(String content, LocalDate sent, User user) {
+    public Message(String content, LocalDateTime sent, User user) {
         this.content = content;
         this.sent = sent;
         this.user = user;
@@ -17,7 +17,7 @@ public class Message {
         return content;
     }
 
-    public LocalDate getSent() {
+    public LocalDateTime getSent() {
         return sent;
     }
 

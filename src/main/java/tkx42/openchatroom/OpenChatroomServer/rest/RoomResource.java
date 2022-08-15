@@ -5,10 +5,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import tkx42.openchatroom.OpenChatroomServer.model.Message;
 import tkx42.openchatroom.OpenChatroomServer.model.Room;
 import tkx42.openchatroom.OpenChatroomServer.model.User;
 import tkx42.openchatroom.OpenChatroomServer.service.RoomService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +25,7 @@ public class RoomResource {
 
     @PostMapping("/add")
     public ResponseEntity<Room> addRoom(@RequestBody Room room) {
-        if(roomService.roomNameExists(room.getName())) {
+        if (roomService.roomNameExists(room.getName())) {
             // rooms with the same name are not allowed
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
@@ -36,17 +38,53 @@ public class RoomResource {
         return ResponseEntity.ok(roomService.getListedRooms());
     }
 
-    @PostMapping("/join")
-    public ResponseEntity<UUID> joinRoom(@RequestBody User user, @RequestParam String roomName) {
-        Room room = roomService.getRoom(roomName);
-        if(room == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+    @PostMapping("/{room}/join")
+    public ResponseEntity<UUID> joinRoom(@PathVariable(name = "room") String roomName, @RequestBody User user) {
+        Room room = getRoom(roomName);
 
-        if(!room.addUser(user)) {
+        if (!room.addUser(user)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
         return ResponseEntity.ok(user.getUuid());
+    }
+
+    @PostMapping("/{room}/send")
+    public ResponseEntity<Message> send(@PathVariable(name = "room") String roomName, @RequestBody Message message, @RequestHeader(name = "user") UUID userUUID) {
+        Room room = getRoom(roomName);
+
+        User user = roomService.getUser(room, userUUID);
+        checkObject(user);
+
+        Message messageToSend = new Message(message.getContent(), LocalDateTime.now(), user);
+        return ResponseEntity.ok(room.getMessageList().addMessage(messageToSend));
+    }
+
+    @GetMapping("/{room}/messages")
+    public ResponseEntity<List<Message>> messages(@PathVariable(name = "room") String roomName, @RequestHeader(name = "user") UUID userUUID, @RequestParam(required = false, defaultValue = "0") int chunk) {
+        Room room = getRoom(roomName);
+
+        User user = getUser(userUUID, room);
+
+        if (!roomService.userJoinedRoom(user, room)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+
+        return ResponseEntity.ok(room.getMessageList().getChunk(chunk));
+    }
+
+    private Room getRoom(String roomName) {
+        Room room = roomService.getRoom(roomName);
+        checkObject(room);
+        return room;
+    }
+
+    private User getUser(UUID userUUID, Room room) {
+        User user = roomService.getUser(room, userUUID);
+        checkObject(user);
+        return user;
+    }
+
+
+    public void checkObject(Object obj) {
+        if (obj == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 }

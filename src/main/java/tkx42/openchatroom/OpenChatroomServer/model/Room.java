@@ -1,11 +1,14 @@
 package tkx42.openchatroom.OpenChatroomServer.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashSet;
 
 public class Room {
     private final String name;
     private final boolean listed;
     private int msgTimeout;
+    @JsonIgnore
     private final MessageList messageList;
     private final HashSet<User> users;
 

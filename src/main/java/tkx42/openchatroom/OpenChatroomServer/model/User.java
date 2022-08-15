@@ -29,7 +29,7 @@ public class User {
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof User)) return false;
-        return ((User)obj).getName().equals(getName());
+        return ((User) obj).getName().equals(getName());
     }
 
     // hashCode shouldn't be used for comparison of two users (for example in HashSet). The overwritten equals method should be used instead
