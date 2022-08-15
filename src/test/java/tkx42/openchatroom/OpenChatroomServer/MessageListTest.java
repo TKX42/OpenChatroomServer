@@ -6,7 +6,6 @@ import tkx42.openchatroom.OpenChatroomServer.model.Message;
 import tkx42.openchatroom.OpenChatroomServer.model.MessageList;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

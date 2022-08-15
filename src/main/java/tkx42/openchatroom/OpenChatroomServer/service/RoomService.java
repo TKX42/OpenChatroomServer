@@ -25,6 +25,12 @@ public class RoomService {
         return room;
     }
 
+    public Room getRoom(String name) {
+        return roomRepository.getRooms().stream().filter(
+                room -> room.getName().equals(name))
+                .findFirst().orElse(null);
+    }
+
     public List<Room> getListedRooms() {
         return roomRepository.getListedRooms();
     }
