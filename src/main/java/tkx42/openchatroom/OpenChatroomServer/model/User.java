@@ -3,16 +3,23 @@ package tkx42.openchatroom.OpenChatroomServer.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.net.http.HttpHeaders;
 import java.util.UUID;
 
 public class User {
     @JsonIgnore     // UUID should not be exposed for example when retrieving listed rooms
     private final UUID uuid;
+    @JsonProperty(required = true)
+    @NonNull
     private final String name;
 
     @JsonCreator
     public User(@JsonProperty("name") String name) {
+        if(name.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is blank!");
         this.name = name;
         uuid = UUID.randomUUID();
     }
