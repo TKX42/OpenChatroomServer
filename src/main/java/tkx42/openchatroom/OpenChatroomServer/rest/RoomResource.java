@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping(path = "/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RoomResource {
@@ -25,9 +26,9 @@ public class RoomResource {
 
     @PostMapping("/add")
     public ResponseEntity<Room> addRoom(@RequestBody Room room) {
-        if (roomService.roomNameExists(room.getName())) {
+        if (!roomService.roomNameIsAvailable(room.getName())) {
             // rooms with the same name are not allowed
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Room with same name already exists!");
         }
 
         return ResponseEntity.ok(roomService.addRoom(room));
@@ -43,7 +44,7 @@ public class RoomResource {
         Room room = getRoom(roomName);
 
         if (!room.addUser(user)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists!");
         }
 
         return ResponseEntity.ok(user.getUuid());
@@ -53,8 +54,7 @@ public class RoomResource {
     public ResponseEntity<Message> send(@PathVariable(name = "room") String roomName, @RequestBody Message message, @RequestHeader(name = "user") UUID userUUID) {
         Room room = getRoom(roomName);
 
-        User user = roomService.getUser(room, userUUID);
-        checkObject(user);
+        User user = getUser(userUUID, room);
 
         Message messageToSend = new Message(message.getContent(), LocalDateTime.now(), user);
         return ResponseEntity.ok(room.getMessageList().addMessage(messageToSend));
@@ -66,20 +66,26 @@ public class RoomResource {
 
         User user = getUser(userUUID, room);
 
-        if (!roomService.userJoinedRoom(user, room)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        if (!roomService.userJoinedRoom(user, room)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User didn't join room!");
 
         return ResponseEntity.ok(room.getMessageList().getChunk(chunk));
     }
 
+    @GetMapping("/{room}/{name}/available")
+    public ResponseEntity<Boolean> nameIsAvailable(@PathVariable(name = "room") String roomName, @PathVariable String name) {
+        Room room = getRoom(roomName);
+        return ResponseEntity.ok(roomService.usernameIsAvailable(name, room));
+    }
+
     private Room getRoom(String roomName) {
         Room room = roomService.getRoom(roomName);
-        checkObject(room);
+        if(room == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find room.");
         return room;
     }
 
     private User getUser(UUID userUUID, Room room) {
         User user = roomService.getUser(room, userUUID);
-        checkObject(user);
+        if(user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find user.");
         return user;
     }
 

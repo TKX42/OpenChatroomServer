@@ -17,8 +17,8 @@ public class RoomService {
         this.roomRepository = roomRepository;
     }
 
-    public boolean roomNameExists(String name) {
-        return roomRepository.getRooms().stream().anyMatch(room -> Objects.equals(room.getName(), name));
+    public boolean roomNameIsAvailable(String name) {
+        return roomRepository.getRooms().stream().noneMatch(room -> Objects.equals(room.getName(), name));
     }
 
     public Room addRoom(Room room) {
@@ -46,5 +46,9 @@ public class RoomService {
     public boolean userJoinedRoom(User user, Room room) {
         return room.getUsers().stream().anyMatch(
                 x -> x.getUuid().equals(user.getUuid()));
+    }
+
+    public boolean usernameIsAvailable(String name, Room room) {
+        return room.getUsers().stream().noneMatch(user -> user.getName().equals(name));
     }
 }
