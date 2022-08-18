@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 @RestController
 @RequestMapping(path = "/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RoomResource {
