@@ -77,6 +77,12 @@ public class RoomResource {
         return ResponseEntity.ok(roomService.usernameIsAvailable(name, room));
     }
 
+    @GetMapping("/{room}")
+    public ResponseEntity<Room> room(@PathVariable(name = "room") String roomName) {
+        Room room = getRoom(roomName);
+        return ResponseEntity.ok(room);
+    }
+
     private Room getRoom(String roomName) {
         Room room = roomService.getRoom(roomName);
         if(room == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find room.");
