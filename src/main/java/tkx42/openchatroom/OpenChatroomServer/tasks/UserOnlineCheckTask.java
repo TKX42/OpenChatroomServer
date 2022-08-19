@@ -28,7 +28,6 @@ public class UserOnlineCheckTask {
         for (Room room : roomService.getRooms()) {
             for (User user : room.getUsers()) {
                 // Users who haven't ping for longer than onlinePingInterval are set to be offline
-                log.info("Checking online status of user {}", user.getName());
                 long timeSinceLastPing = Duration.between(user.getLastPing(), LocalDateTime.now()).toMillis();
                 user.setOnline(timeSinceLastPing < onlinePingInterval);
                 log.info("Set online status of {} to {}", user.getName(), user.isOnline());
