@@ -1,11 +1,13 @@
 package tkx42.openchatroom.OpenChatroomServer.service;
 
 import org.springframework.stereotype.Service;
+import tkx42.openchatroom.OpenChatroomServer.model.Message;
 import tkx42.openchatroom.OpenChatroomServer.model.Room;
 import tkx42.openchatroom.OpenChatroomServer.model.User;
 import tkx42.openchatroom.OpenChatroomServer.repository.RoomRepository;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -55,6 +57,11 @@ public class RoomService {
 
     public boolean usernameIsAvailable(String name, Room room) {
         return room.getUsers().stream().noneMatch(user -> user.getName().equals(name));
+    }
+
+    public Message send(Message message, Room room, User user) {
+        Message messageToSend = new Message(message.getContent(), ZonedDateTime.now(), user);
+        return room.getMessageList().addMessage(messageToSend);
     }
 
     public void ping(User user) {

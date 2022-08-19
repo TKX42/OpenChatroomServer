@@ -10,7 +10,6 @@ import tkx42.openchatroom.OpenChatroomServer.model.Room;
 import tkx42.openchatroom.OpenChatroomServer.model.User;
 import tkx42.openchatroom.OpenChatroomServer.service.RoomService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,17 +52,14 @@ public class RoomResource {
     @PostMapping("/{room}/send")
     public ResponseEntity<Message> send(@PathVariable(name = "room") String roomName, @RequestBody Message message, @RequestHeader(name = "user") UUID userUUID) {
         Room room = getRoom(roomName);
-
         User user = getUser(userUUID, room);
 
-        Message messageToSend = new Message(message.getContent(), LocalDateTime.now(), user);
-        return ResponseEntity.ok(room.getMessageList().addMessage(messageToSend));
+        return ResponseEntity.ok(roomService.send(message, room, user));
     }
 
     @GetMapping("/{room}/messages")
     public ResponseEntity<List<Message>> messages(@PathVariable(name = "room") String roomName, @RequestHeader(name = "user") UUID userUUID, @RequestParam(required = false, defaultValue = "0") int chunk) {
         Room room = getRoom(roomName);
-
         User user = getUser(userUUID, room);
 
         if (!roomService.userJoinedRoom(user, room))

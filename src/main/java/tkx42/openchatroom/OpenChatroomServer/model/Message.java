@@ -1,15 +1,15 @@
 package tkx42.openchatroom.OpenChatroomServer.model;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class Message {
     private final UUID uuid;
     private final String content;
-    private final LocalDateTime sent;
+    private final ZonedDateTime sent;
     private final User user;
 
-    public Message(String content, LocalDateTime sent, User user) {
+    public Message(String content, ZonedDateTime sent, User user) {
         this.content = content;
         this.sent = sent;
         this.user = user;
@@ -20,7 +20,7 @@ public class Message {
         return content;
     }
 
-    public LocalDateTime getSent() {
+    public ZonedDateTime getSent() {
         return sent;
     }
 
