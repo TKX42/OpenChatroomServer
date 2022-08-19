@@ -27,13 +27,13 @@ public class UserOnlineCheckTask {
     public void checkUserOnlineStatus() {
         for (Room room : roomService.getRooms()) {
             for (User user : room.getUsers()) {
-                // Users who didn't ping for longer than onlinePingInterval are set to be offline
+                // Users who haven't ping for longer than onlinePingInterval are set to be offline
                 log.info("Checking online status of user {}", user.getName());
                 long timeSinceLastPing = Duration.between(user.getLastPing(), LocalDateTime.now()).toMillis();
                 user.setOnline(timeSinceLastPing < onlinePingInterval);
                 log.info("Set online status of {} to {}", user.getName(), user.isOnline());
 
-                // After the maximum offline duration, the user gets removed from the room and freeing the name
+                // After the maximum offline duration, the user gets removed from the room and the name freed
                 if (timeSinceLastPing > maxOfflineDuration) {
                     log.info("Removing user {}", user.getName());
                     room.getUsers().remove(user);
