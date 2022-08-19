@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 
 @Component
 public class UserOnlineCheckTask {
-    private final int INTERVAL = 10000;
+    private final int INTERVAL = 3100;
     private static final Logger log = LoggerFactory.getLogger(UserOnlineCheckTask.class);
-    private final long onlinePingInterval = 6000;
+    private final long onlinePingInterval = 3000;
     private final long maxOfflineDuration = (3 * 24 * 60 * 60 * 1000); // 3 days
     private final RoomService roomService;
 
