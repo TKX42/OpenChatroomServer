@@ -45,6 +45,7 @@ public class RoomResource {
         if (!room.addUser(user)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists!");
         }
+        user.setOnline(true);
 
         return ResponseEntity.ok(user.getUuid());
     }
