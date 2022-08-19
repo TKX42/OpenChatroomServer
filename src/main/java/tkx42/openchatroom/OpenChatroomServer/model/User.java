@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.net.http.HttpHeaders;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class User {
@@ -16,12 +16,15 @@ public class User {
     @JsonProperty(required = true)
     @NonNull
     private final String name;
+    private boolean online;
+    private LocalDateTime lastPing;
 
     @JsonCreator
     public User(@JsonProperty("name") String name) {
-        if(name.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is blank!");
+        if (name.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is blank!");
         this.name = name;
         uuid = UUID.randomUUID();
+        lastPing = LocalDateTime.now();
     }
 
     public String getName() {
@@ -30,6 +33,22 @@ public class User {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    public LocalDateTime getLastPing() {
+        return lastPing;
+    }
+
+    public void setLastPing(LocalDateTime lastPing) {
+        this.lastPing = lastPing;
     }
 
     // Users of the same name are not allowed

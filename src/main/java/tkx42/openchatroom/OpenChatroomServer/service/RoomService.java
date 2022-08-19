@@ -5,6 +5,7 @@ import tkx42.openchatroom.OpenChatroomServer.model.Room;
 import tkx42.openchatroom.OpenChatroomServer.model.User;
 import tkx42.openchatroom.OpenChatroomServer.repository.RoomRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -37,6 +38,10 @@ public class RoomService {
         return roomRepository.getListedRooms();
     }
 
+    public List<Room> getRooms() {
+        return roomRepository.getRooms();
+    }
+
     public User getUser(Room room, UUID userUUID) {
         return room.getUsers().stream().filter(
                         user -> user.getUuid().equals(userUUID))
@@ -50,5 +55,9 @@ public class RoomService {
 
     public boolean usernameIsAvailable(String name, Room room) {
         return room.getUsers().stream().noneMatch(user -> user.getName().equals(name));
+    }
+
+    public void ping(User user) {
+        user.setLastPing(LocalDateTime.now());
     }
 }

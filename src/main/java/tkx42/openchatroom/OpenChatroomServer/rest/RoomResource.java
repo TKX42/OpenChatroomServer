@@ -66,7 +66,8 @@ public class RoomResource {
 
         User user = getUser(userUUID, room);
 
-        if (!roomService.userJoinedRoom(user, room)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User didn't join room!");
+        if (!roomService.userJoinedRoom(user, room))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User didn't join room!");
 
         return ResponseEntity.ok(room.getMessageList().getChunk(chunk));
     }
@@ -83,15 +84,23 @@ public class RoomResource {
         return ResponseEntity.ok(room);
     }
 
+    @PostMapping("/{room}/ping")
+    public ResponseEntity<Boolean> ping(@PathVariable(name = "room") String roomName, @RequestHeader(name = "user") UUID userUUID) {
+        Room room = getRoom(roomName);
+        User user = getUser(userUUID, room);
+        roomService.ping(user);
+        return ResponseEntity.ok(true);
+    }
+
     private Room getRoom(String roomName) {
         Room room = roomService.getRoom(roomName);
-        if(room == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find room.");
+        if (room == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find room.");
         return room;
     }
 
     private User getUser(UUID userUUID, Room room) {
         User user = roomService.getUser(room, userUUID);
-        if(user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find user.");
+        if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find user.");
         return user;
     }
 
