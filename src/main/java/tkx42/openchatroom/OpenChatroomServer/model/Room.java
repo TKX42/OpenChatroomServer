@@ -1,10 +1,14 @@
 package tkx42.openchatroom.OpenChatroomServer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 
 public class Room {
+    @NonNull
     private final String name;
     private final boolean listed;
     private int msgTimeout;
@@ -13,6 +17,7 @@ public class Room {
     private final HashSet<User> users;
 
     public Room(String name, boolean listed, int msgTimeout) {
+        if (name.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is blank!");
         this.name = name;
         this.listed = listed;
         this.msgTimeout = msgTimeout;
