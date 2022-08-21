@@ -12,4 +12,9 @@ public class MainResource {
     public ResponseEntity<Object> index() {
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/deployment")
+    public String deploymentTest() {
+        return "automatic deployment test 2";
+    }
 }
