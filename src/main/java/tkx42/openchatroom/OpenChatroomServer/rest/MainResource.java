@@ -15,6 +15,6 @@ public class MainResource {
 
     @GetMapping("/deployment")
     public String deploymentTest() {
-        return "automatic deployment test 2";
+        return "automatic deployment test 3";
     }
 }
