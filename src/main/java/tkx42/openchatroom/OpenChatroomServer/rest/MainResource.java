@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MainResource {
     @GetMapping("/")
-    public ResponseEntity<Object> index() {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> index() {
+        return ResponseEntity.ok("Open Chatroom Server");
     }
 
     @GetMapping("/deployment")
