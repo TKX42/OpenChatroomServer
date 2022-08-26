@@ -42,10 +42,7 @@ public class RoomResource {
     public ResponseEntity<UUID> joinRoom(@PathVariable(name = "room") String roomName, @RequestBody User user) {
         Room room = getRoom(roomName);
 
-        if (!room.addUser(user)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists!");
-        }
-        user.setOnline(true);
+        roomService.join(user, room);
 
         return ResponseEntity.ok(user.getUuid());
     }
@@ -85,7 +82,7 @@ public class RoomResource {
     public ResponseEntity<Boolean> ping(@PathVariable(name = "room") String roomName, @RequestHeader(name = "user") UUID userUUID) {
         Room room = getRoom(roomName);
         User user = getUser(userUUID, room);
-        roomService.ping(user);
+        roomService.ping(user, room);
         return ResponseEntity.ok(true);
     }
 

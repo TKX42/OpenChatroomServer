@@ -1,14 +1,21 @@
 package tkx42.openchatroom.OpenChatroomServer.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MessageList {
-    private final int CHUNK_SIZE = 16;
-    private final List<Message> messages;
+    @Id
+    String id;
+    @Transient
+    private final int chunkSize;
+    private List<Message> messages;     // not final because mongodb
 
     public MessageList() {
         messages = new ArrayList<>();
+        chunkSize = 16;
     }
 
     public Message addMessage(Message message) {
@@ -18,11 +25,11 @@ public class MessageList {
     }
 
     private int chunkEnd(int index, int size) {
-        return size - index * CHUNK_SIZE;
+        return size - index * chunkSize;
     }
 
     public List<Message> getChunk(int index) {
-        int start = (index + 1) * CHUNK_SIZE;
+        int start = (index + 1) * chunkSize;
 
         if (start - 16 > messages.size()) return null;
 
@@ -37,6 +44,14 @@ public class MessageList {
     }
 
     public int getChunkSize() {
-        return CHUNK_SIZE;
+        return chunkSize;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
     }
 }

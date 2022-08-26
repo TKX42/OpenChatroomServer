@@ -1,19 +1,20 @@
 package tkx42.openchatroom.OpenChatroomServer.model;
 
+import org.springframework.data.annotation.Id;
+
 import java.time.ZonedDateTime;
-import java.util.UUID;
 
 public class Message {
-    private final UUID uuid;
+    @Id
+    private String id;
     private final String content;
     private final ZonedDateTime sent;
-    private final User user;
+    private final MessageCreator creator;
 
-    public Message(String content, ZonedDateTime sent, User user) {
+    public Message(String content, ZonedDateTime sent, MessageCreator creator) {
         this.content = content;
         this.sent = sent;
-        this.user = user;
-        uuid = UUID.randomUUID();
+        this.creator = creator;
     }
 
     public String getContent() {
@@ -24,11 +25,11 @@ public class Message {
         return sent;
     }
 
-    public User getUser() {
-        return user;
+    public MessageCreator getCreator() {
+        return creator;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public String getId() {
+        return id;
     }
 }
