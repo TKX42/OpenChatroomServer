@@ -1,20 +1,25 @@
 package tkx42.openchatroom.OpenChatroomServer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 
+@Document("rooms")
 public class Room {
+    @Id
+    private String id;
     @NonNull
     private final String name;
     private final boolean listed;
     private int msgTimeout;
     @JsonIgnore
-    private final MessageList messageList;
-    private final HashSet<User> users;
+    private MessageList messageList;
+    private HashSet<User> users;
 
     public Room(String name, boolean listed, int msgTimeout) {
         if (name.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is blank!");
@@ -51,5 +56,9 @@ public class Room {
 
     public HashSet<User> getUsers() {
         return users;
+    }
+
+    public String getId() {
+        return id;
     }
 }

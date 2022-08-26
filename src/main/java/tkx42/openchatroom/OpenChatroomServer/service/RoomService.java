@@ -1,7 +1,11 @@
 package tkx42.openchatroom.OpenChatroomServer.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import tkx42.openchatroom.OpenChatroomServer.model.Message;
+import tkx42.openchatroom.OpenChatroomServer.model.MessageCreator;
 import tkx42.openchatroom.OpenChatroomServer.model.Room;
 import tkx42.openchatroom.OpenChatroomServer.model.User;
 import tkx42.openchatroom.OpenChatroomServer.repository.RoomRepository;
@@ -11,37 +15,35 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
-    private final RoomRepository roomRepository;
-
-    public RoomService(RoomRepository roomRepository) {
-        this.roomRepository = roomRepository;
-    }
+    @Autowired
+    private RoomRepository roomRepository;
 
     public boolean roomNameIsAvailable(String name) {
-        return roomRepository.getRooms().stream().noneMatch(room -> Objects.equals(room.getName(), name));
+        return roomRepository.findAll().stream().noneMatch(room -> Objects.equals(room.getName(), name));
     }
 
     public Room addRoom(Room room) {
-        if (roomRepository.getRooms().contains(room)) return null;
-        roomRepository.addRoom(room);
+        if (roomRepository.findAll().contains(room)) return null;
+        roomRepository.save(room);
         return room;
     }
 
     public Room getRoom(String name) {
-        return roomRepository.getRooms().stream().filter(
+        return roomRepository.findAll().stream().filter(
                         room -> room.getName().equals(name))
                 .findFirst().orElse(null);
     }
 
     public List<Room> getListedRooms() {
-        return roomRepository.getListedRooms();
+        return roomRepository.findAll().stream().filter(Room::isListed).collect(Collectors.toList());
     }
 
     public List<Room> getRooms() {
-        return roomRepository.getRooms();
+        return roomRepository.findAll();
     }
 
     public User getUser(Room room, UUID userUUID) {
@@ -59,12 +61,33 @@ public class RoomService {
         return room.getUsers().stream().noneMatch(user -> user.getName().equals(name));
     }
 
-    public Message send(Message message, Room room, User user) {
-        Message messageToSend = new Message(message.getContent(), ZonedDateTime.now(), user);
-        return room.getMessageList().addMessage(messageToSend);
+    public void join(User user, Room room) {
+        if (!room.addUser(user)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists!");
+        }
+        roomRepository.save(room);
     }
 
-    public void ping(User user) {
+    public Message send(Message message, Room room, User user) {
+        MessageCreator creator = new MessageCreator(user);
+        Message messageToSend = new Message(message.getContent(), ZonedDateTime.now(), creator);
+        Message result = room.getMessageList().addMessage(messageToSend);
+        roomRepository.save(room);
+        return result;
+    }
+
+    public void ping(User user, Room room) {
         user.setLastPing(LocalDateTime.now());
+        roomRepository.save(room);
+    }
+
+    public void setUserOnline(User user, Room room, boolean online) {
+        user.setOnline(online);
+        roomRepository.save(room);
+    }
+
+    public void removeUser(User user, Room room) {
+        room.getUsers().remove(user);
+        roomRepository.save(room);
     }
 }
