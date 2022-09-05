@@ -17,6 +17,7 @@ public class User {
     @NonNull
     private final String name;
     private boolean online;
+    @JsonIgnore     // Not very sensitive information but unnecessary overhead
     private LocalDateTime lastPing;
 
     @JsonCreator
