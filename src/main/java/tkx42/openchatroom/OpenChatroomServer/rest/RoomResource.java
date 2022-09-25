@@ -41,10 +41,7 @@ public class RoomResource {
     @PostMapping("/{room}/join")
     public ResponseEntity<UUID> joinRoom(@PathVariable(name = "room") String roomName, @RequestBody User user) {
         Room room = getRoom(roomName);
-
-        roomService.join(user, room);
-
-        return ResponseEntity.ok(user.getUuid());
+        return ResponseEntity.ok(roomService.join(user, room).getUuid());
     }
 
     @PostMapping("/{room}/send")

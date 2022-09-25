@@ -59,6 +59,12 @@ public class User {
         return ((User) obj).getName().equals(getName());
     }
 
+    @Override
+    public String toString() {
+        return String.format("[%s, %s]", uuid, name);
+    }
+
+    @Override
     // hashCode shouldn't be used for comparison of two users (for example in HashSet). The overwritten equals method should be used instead
     public int hashCode() {
         return 0;

@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document("rooms")
 public class Room {
@@ -19,7 +20,7 @@ public class Room {
     private int msgTimeout;
     @JsonIgnore
     private MessageList messageList;
-    private HashSet<User> users;
+    private List<User> users;
 
     public Room(String name, boolean listed, int msgTimeout) {
         if (name.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is blank!");
@@ -27,7 +28,7 @@ public class Room {
         this.listed = listed;
         this.msgTimeout = msgTimeout;
         messageList = new MessageList();
-        users = new HashSet<>();
+        users = new ArrayList<>();
     }
 
     public String getName() {
@@ -51,10 +52,11 @@ public class Room {
     }
 
     public boolean addUser(User user) {
+        if (users.contains(user)) return false;
         return users.add(user);
     }
 
-    public HashSet<User> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 

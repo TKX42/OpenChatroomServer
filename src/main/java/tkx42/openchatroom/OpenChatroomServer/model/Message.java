@@ -34,4 +34,9 @@ public class Message {
     public UUID getUuid() {
         return uuid;
     }
+
+    @Override
+    public String toString() {
+        return String.format("[%s, %s (%s)]", uuid, content, sent.toString());
+    }
 }
