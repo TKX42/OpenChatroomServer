@@ -3,15 +3,17 @@ package tkx42.openchatroom.OpenChatroomServer.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Embeddable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Embeddable
 public class MessageList {
-    @Id
-    String id;
     @Transient
     private final int chunkSize;
-    private List<Message> messages;     // not final because mongodb
+    @ElementCollection
+    private List<Message> messages;
 
     public MessageList() {
         messages = new ArrayList<>();
@@ -45,10 +47,6 @@ public class MessageList {
 
     public int getChunkSize() {
         return chunkSize;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public List<Message> getMessages() {

@@ -7,25 +7,31 @@ import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.Embeddable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Embeddable
 public class User {
     @JsonIgnore     // UUID should not be exposed for example when retrieving listed rooms
     private UUID uuid;
     @JsonProperty(required = true)
     @NonNull
-    private final String name;
+    private String name;
     private boolean online;
     @JsonIgnore     // Not very sensitive information but unnecessary overhead
     private LocalDateTime lastPing;
 
     @JsonCreator
-    public User(@JsonProperty("name") String name) {
+    public User(String name) {
         if (name.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is blank!");
         this.name = name;
         uuid = UUID.randomUUID();
         lastPing = LocalDateTime.now();
+    }
+
+    public User() {
+
     }
 
     public String getName() {
@@ -46,6 +52,14 @@ public class User {
 
     public LocalDateTime getLastPing() {
         return lastPing;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setName(@NonNull String name) {
+        this.name = name;
     }
 
     public void setLastPing(LocalDateTime lastPing) {

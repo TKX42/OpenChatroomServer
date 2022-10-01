@@ -1,25 +1,29 @@
 package tkx42.openchatroom.OpenChatroomServer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashSet;
+import javax.persistence.*;
 
-@Document("rooms")
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table
 public class Room {
     @Id
+    @GeneratedValue
     private String id;
     @NonNull
-    private final String name;
-    private final boolean listed;
+    private String name;
+    private boolean listed;
     private int msgTimeout;
     @JsonIgnore
     private MessageList messageList;
-    private HashSet<User> users;
+    @ElementCollection
+    private Set<User> users;
 
     public Room(String name, boolean listed, int msgTimeout) {
         if (name.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is blank!");
@@ -30,12 +34,33 @@ public class Room {
         users = new HashSet<>();
     }
 
+    public Room() {
+
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @NonNull
     public String getName() {
         return name;
     }
 
+    public void setName(@NonNull String name) {
+        this.name = name;
+    }
+
     public boolean isListed() {
         return listed;
+    }
+
+    public void setListed(boolean listed) {
+        this.listed = listed;
     }
 
     public int getMsgTimeout() {
@@ -50,15 +75,19 @@ public class Room {
         return messageList;
     }
 
+    public void setMessageList(MessageList messageList) {
+        this.messageList = messageList;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
     public boolean addUser(User user) {
         return users.add(user);
     }
 
-    public HashSet<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
-    }
-
-    public String getId() {
-        return id;
     }
 }
