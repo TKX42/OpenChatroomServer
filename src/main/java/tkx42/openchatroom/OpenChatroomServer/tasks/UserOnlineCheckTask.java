@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import tkx42.openchatroom.OpenChatroomServer.model.Room;
 import tkx42.openchatroom.OpenChatroomServer.model.User;
 import tkx42.openchatroom.OpenChatroomServer.service.RoomService;
@@ -12,6 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Component
+@Transactional  // https://stackoverflow.com/questions/11746499/how-to-solve-the-failed-to-lazily-initialize-a-collection-of-role-hibernate-ex
 public class UserOnlineCheckTask {
     private final int INTERVAL = 3100;
     private static final Logger log = LoggerFactory.getLogger(UserOnlineCheckTask.class);
@@ -27,7 +29,7 @@ public class UserOnlineCheckTask {
     public void checkUserOnlineStatus() {
         for (Room room : roomService.getRooms()) {
             for (User user : room.getUsers()) {
-                // Users who haven't ping for longer than onlinePingInterval are set to be offline
+                // Users who didn't ping for longer than onlinePingInterval are set to be offline
                 long timeSinceLastPing = Duration.between(user.getLastPing(), LocalDateTime.now()).toMillis();
                 boolean online = timeSinceLastPing < onlinePingInterval;
 

@@ -6,7 +6,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +14,7 @@ import java.util.Set;
 public class Room {
     @Id
     @GeneratedValue
-    private String id;
+    private Long id;
     @NonNull
     private String name;
     private boolean listed;
@@ -35,14 +34,15 @@ public class Room {
     }
 
     public Room() {
-
+        messageList = new MessageList();
+        users = new HashSet<>();
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

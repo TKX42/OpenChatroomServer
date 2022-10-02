@@ -31,7 +31,7 @@ public class User {
     }
 
     public User() {
-
+        uuid = UUID.randomUUID();
     }
 
     public String getName() {

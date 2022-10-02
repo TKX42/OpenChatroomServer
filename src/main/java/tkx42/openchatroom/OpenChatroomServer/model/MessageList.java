@@ -1,6 +1,5 @@
 package tkx42.openchatroom.OpenChatroomServer.model;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 
 import javax.persistence.ElementCollection;
