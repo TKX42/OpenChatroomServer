@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.web.server.ResponseStatusException;
-
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -22,7 +21,7 @@ public class Room {
     @JsonIgnore
     private MessageList messageList;
     @ElementCollection
-    private Set<User> users;
+    private List<User> users;
 
     public Room(String name, boolean listed, int msgTimeout) {
         if (name.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is blank!");
@@ -30,12 +29,12 @@ public class Room {
         this.listed = listed;
         this.msgTimeout = msgTimeout;
         messageList = new MessageList();
-        users = new HashSet<>();
+        users = new ArrayList<>();
     }
 
     public Room() {
         messageList = new MessageList();
-        users = new HashSet<>();
+        users = new ArrayList<>();
     }
 
     public Long getId() {
@@ -79,15 +78,16 @@ public class Room {
         this.messageList = messageList;
     }
 
-    public void setUsers(Set<User> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 
     public boolean addUser(User user) {
+        if(users.contains(user)) return false;
         return users.add(user);
     }
 
-    public Set<User> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 }
