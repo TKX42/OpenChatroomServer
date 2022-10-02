@@ -11,6 +11,8 @@ import tkx42.openchatroom.OpenChatroomServer.service.RoomService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Transactional  // https://stackoverflow.com/questions/11746499/how-to-solve-the-failed-to-lazily-initialize-a-collection-of-role-hibernate-ex
@@ -28,7 +30,10 @@ public class UserOnlineCheckTask {
     @Scheduled(fixedRate = INTERVAL)
     public void checkUserOnlineStatus() {
         for (Room room : roomService.getRooms()) {
-            for (User user : room.getUsers()) {
+            List<User> toBeRemoved = new ArrayList<>();
+            List<User> users = room.getUsers();
+            for (int i = 0; i < users.size(); i++) {
+                User user = users.get(i);
                 // Users who didn't ping for longer than onlinePingInterval are set to be offline
                 long timeSinceLastPing = Duration.between(user.getLastPing(), LocalDateTime.now()).toMillis();
                 boolean online = timeSinceLastPing < onlinePingInterval;
@@ -40,9 +45,14 @@ public class UserOnlineCheckTask {
 
                 // After the maximum offline duration, the user gets removed from the room and the name freed
                 if (timeSinceLastPing > maxOfflineDuration) {
-                    log.info("Removing user {}", user.getName());
-                    roomService.removeUser(user, room);
+                    log.info("Listing user {} for removal", user.getName());
+                    toBeRemoved.add(user);
                 }
+            }
+
+            for(User user : toBeRemoved) {
+                log.info("Removing user {}", user.getName());
+                roomService.removeUser(user, room);
             }
         }
     }
