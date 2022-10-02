@@ -56,4 +56,9 @@ public class Message {
     public void setCreator(MessageCreator creator) {
         this.creator = creator;
     }
+
+    @Override
+    public String toString() {
+        return String.format("[%s, %s (%s)]", uuid, content, sent.toString());
+    }
 }
