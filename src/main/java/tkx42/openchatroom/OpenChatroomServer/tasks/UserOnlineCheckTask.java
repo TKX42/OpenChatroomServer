@@ -32,7 +32,7 @@ public class UserOnlineCheckTask {
         for (Room room : roomService.getRooms()) {
             List<User> toBeRemoved = new ArrayList<>();
             List<User> users = room.getUsers();
-            for (int i = 0; i < users.size(); i++) {
+            for (int i = 0; i < users.size(); i++) {        // for loop to fix ConcurrentModificationException
                 User user = users.get(i);
                 // Users who didn't ping for longer than onlinePingInterval are set to be offline
                 long timeSinceLastPing = Duration.between(user.getLastPing(), LocalDateTime.now()).toMillis();
